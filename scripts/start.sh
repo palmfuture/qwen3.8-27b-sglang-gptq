@@ -108,7 +108,7 @@ docker run -d \
   --weight-cache-mode off \
   --mm-feature-transport cpu \
   --tp "${TP_SIZE}" \
-  --mem-fraction-static 0.85 \
+  --mem-fraction-static 0.9 \
   --attention-backend flashinfer \
   --cuda-graph-max-bs-decode 8 \
   --chunked-prefill-size "${CHUNKED_PREFILL}" \
