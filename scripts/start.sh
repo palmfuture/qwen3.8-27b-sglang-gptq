@@ -11,7 +11,7 @@
 set -euo pipefail
 
 # ---- overridable via env ----
-MODEL_PATH="${MODEL_PATH:-/models/Qwen3.8-27B-GPTQ-Int4}"   # inside container
+MODEL_PATH="${MODEL_PATH:-/models/Qwen3.8-27B-GPTQ-Int4}"   # inside container OR HF repo id (e.g. palmpfuture/Qwen3.8-27B-GPTQ-Int4)
 SERVED_MODEL_NAME="${SERVED_MODEL_NAME:-Qwen3.8-27B-GPTQ}"   # matches vLLM exactly
 IMAGE="lmsysorg/sglang:qwen38-27b"
 CONTAINER_NAME="${CONTAINER_NAME:-sglang_qwen38}"
@@ -22,7 +22,7 @@ CHUNKED_PREFILL="${CHUNKED_PREFILL:-8192}"
 TP_SIZE="${TP_SIZE:-4}"
 HF_CACHE_HOST="${HF_CACHE_HOST:-${HOME}/.cache/sglang_hf}"   # reuse across restarts
 TRITON_CACHE_HOST="${TRITON_CACHE_HOST:-${HOME}/.triton}"
-MODELS_HOST="${MODELS_HOST:-}"                                 # host dir mounted at $MODEL_PATH
+MODELS_HOST="${MODELS_HOST:-}"        # host dir mounted at $MODEL_PATH (only valid when MODEL_PATH is an absolute path)
 READY_URL="http://127.0.0.1:${PORT}/v1/models"
 
 # Repo root (this script lives in scripts/ unless STANDALONE=1 copies patch into container)
@@ -62,10 +62,19 @@ mkdir -p "${HF_CACHE_HOST}" "${TRITON_CACHE_HOST}"
 
 MODEL_MOUNT_ARGS=()
 if [[ -n "${MODELS_HOST}" ]]; then
+  # absolute container path + host dir -> local bind mount
   MODEL_MOUNT_ARGS=(-v "${MODELS_HOST}:${MODEL_PATH}:ro")
+else
+  # MODEL_PATH is treated as a HuggingFace repo id (downloaded into HF_CACHE_HOST)
+  :
 fi
 
 echo "Starting SGLang for ${MODEL_PATH} (${SERVED_MODEL_NAME}) tp=${TP_SIZE}"
+if [[ -n "${MODELS_HOST}" ]]; then
+  echo "Model source: local bind mount ${MODELS_HOST} -> ${MODEL_PATH}"
+else
+  echo "Model source: HuggingFace repo id (cache: ${HF_CACHE_HOST})"
+fi
 echo "Context: ${CONTEXT_LENGTH} | concurrent: ${MAX_CONCURRENT} (mamba pool ${MAMBA_CACHE_SIZE})"
 echo "MTP head patch: ${MTP_PATCH}"
 

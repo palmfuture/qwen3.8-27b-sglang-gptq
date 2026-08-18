@@ -19,10 +19,13 @@ path**, where SGLang has a real bug that silently kills MTP (see below).
 ```bash
 # 1. Edit scripts/start.sh defaults if needed (or override via env):
 #    MODEL_PATH, SERVED_MODEL_NAME, PORT, TP_SIZE, MODELS_HOST, MAX_CONCURRENT ...
-#    MODEL_PATH is the path *inside* the container; set MODELS_HOST to the
-#    host directory containing the checkpoint if it isn't baked in.
-#    The public quantized checkpoint we use:
-#    https://huggingface.co/palmfuture/Qwen3.8-27B-GPTQ-Int4 (GPTQ-Int4, 19 GB)
+#    Two ways to point at a checkpoint:
+#      - HuggingFace (default of this repo when MODELS_HOST is empty): leave
+#        MODELS_HOST unset and set MODEL_PATH to a repo id, e.g.
+#        MODEL_PATH=palmfuture/Qwen3.8-27B-GPTQ-Int4  (auto-download, cached)
+#      - Local dir: set MODEL_PATH to an absolute path inside the container AND
+#        MODELS_HOST to the host directory to bind-mount there.
+#    We use: https://huggingface.co/palmfuture/Qwen3.8-27B-GPTQ-Int4 (GPTQ-Int4, 19 GB)
 
 # 2. Start (MTP + the fix are on by default)
 ./scripts/start.sh
@@ -39,8 +42,8 @@ Environment overrides (all optional):
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `MODEL_PATH` | `/models/Qwen3.8-27B-GPTQ-Int4` | checkpoint path inside container |
-| `MODELS_HOST` | *(empty)* | host dir mounted at `MODEL_PATH` (`-v`) |
+| `MODEL_PATH` | `/models/Qwen3.8-27B-GPTQ-Int4` | checkpoint: absolute path inside container, **or a HuggingFace repo id** (e.g. `palmfuture/Qwen3.8-27B-GPTQ-Int4`) — HF id auto-downloads into `HF_CACHE_HOST` |
+| `MODELS_HOST` | *(empty)* | host dir mounted at `MODEL_PATH` (`-v`). Only used when `MODEL_PATH` is an absolute path; leave empty to load from HuggingFace |
 | `SERVED_MODEL_NAME` | `Qwen3.8-27B-GPTQ` | **must match vLLM** so clients don't change |
 | `PORT` | `8001` | host port (host network) |
 | `TP_SIZE` | `4` | tensor parallelism |
