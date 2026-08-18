@@ -137,16 +137,6 @@ These are all in `start.sh` with comments; the short version of why:
 - FP8 KV cache (`--kv-cache-dtype fp8_e4m3`), flashinfer attention,
   prefill CUDA graphs disabled (GDN layers), YaRN off / native 262K context.
 
-## Rolling back to vLLM
-
-`vllm_qwen38_prod` (same model, same served name) is kept around in our setup
-for instant rollback:
-
-```bash
-./scripts/stop.sh             # stop SGLang
-docker start vllm_qwen38_prod  # start the vLLM container again
-```
-
 ## References
 
 - SGLang cookbook Qwen3.8-27B (DGX Spark recipe): https://docs.sglang.io/cookbook/autoregressive/Qwen/Qwen3.8-27B
