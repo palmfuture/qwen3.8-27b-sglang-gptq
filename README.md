@@ -21,6 +21,8 @@ path**, where SGLang has a real bug that silently kills MTP (see below).
 #    MODEL_PATH, SERVED_MODEL_NAME, PORT, TP_SIZE, MODELS_HOST, MAX_CONCURRENT ...
 #    MODEL_PATH is the path *inside* the container; set MODELS_HOST to the
 #    host directory containing the checkpoint if it isn't baked in.
+#    The public quantized checkpoint we use:
+#    https://huggingface.co/palmfuture/Qwen3.8-27B-GPTQ-Int4 (GPTQ-Int4, 19 GB)
 
 # 2. Start (MTP + the fix are on by default)
 ./scripts/start.sh
@@ -58,7 +60,7 @@ rejected. Speed is unchanged (no gain), and you would think MTP "doesn't work"
 on your hardware.
 
 **Root cause:** SGLang auto-selects the **`gptq_marlin`** kernel for 4-bit
-weighted checkpoints. In `Qwen3_5MTP` (and the Qwen3.5/3.8 family), the MTP
+weighted checkpoints. In `Qwen3_5ForCausalLMMTP` (and the Qwen3.5/3.8 family), the MTP
 head weights are **excluded from quantization** (`mtp.*` is a *negative* rule in
 the GPTQModel `dynamic` dict, and `mtp.safetensors` stores them as bf16/fp16).
 But the draft-model loader applies the `quant_config` to the MTP head anyway →

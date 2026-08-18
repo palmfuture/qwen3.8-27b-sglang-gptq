@@ -23,7 +23,6 @@ TP_SIZE="${TP_SIZE:-4}"
 HF_CACHE_HOST="${HF_CACHE_HOST:-${HOME}/.cache/sglang_hf}"   # reuse across restarts
 TRITON_CACHE_HOST="${TRITON_CACHE_HOST:-${HOME}/.triton}"
 MODELS_HOST="${MODELS_HOST:-}"                                 # host dir mounted at $MODEL_PATH
-LOG_FILE="${LOG_FILE:-/tmp/sglang_qwen38.log}"
 READY_URL="http://127.0.0.1:${PORT}/v1/models"
 
 # Repo root (this script lives in scripts/ unless STANDALONE=1 copies patch into container)
@@ -126,7 +125,7 @@ echo "waiting for readiness at ${READY_URL}..."
 for i in $(seq 1 60); do
   if ! docker ps --format '{{.Names}}' | grep -qx "${CONTAINER_NAME}"; then
     echo "CONTAINER EXITED — last log lines:"
-    tail -n 200 "${LOG_FILE}" 2>/dev/null || docker logs "${CONTAINER_NAME}" 2>&1 | tail -n 200
+    docker logs "${CONTAINER_NAME}" 2>&1 | tail -n 200
     exit 1
   fi
   if curl -fsS "${READY_URL}" >/dev/null 2>&1; then

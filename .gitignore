@@ -1,6 +1,5 @@
 # runtime artifacts
 .env
 *.log
-.sglang.pid
 *.pyc
 __pycache__/

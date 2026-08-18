@@ -3,7 +3,6 @@
 set -euo pipefail
 
 CONTAINER_NAME="${CONTAINER_NAME:-sglang_qwen38}"
-LOG_FILE="${LOG_FILE:-/tmp/sglang_qwen38.log}"
 
 if ! docker ps -a --format '{{.Names}}' | grep -qx "${CONTAINER_NAME}"; then
   echo "Container ${CONTAINER_NAME} does not exist; nothing to stop"
@@ -13,7 +12,6 @@ fi
 if docker ps --format '{{.Names}}' | grep -qx "${CONTAINER_NAME}"; then
   echo "Stopping container ${CONTAINER_NAME}..."
   docker stop "${CONTAINER_NAME}" >/dev/null
-  echo "[$(date -Is)] container stopped" >> "${LOG_FILE}"
   echo "Stopped."
 else
   echo "Container ${CONTAINER_NAME} is not running"
