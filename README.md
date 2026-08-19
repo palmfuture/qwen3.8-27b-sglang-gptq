@@ -49,7 +49,7 @@ Environment overrides (all optional):
 | `TP_SIZE` | `4` | tensor parallelism |
 | `CONTEXT_LENGTH` | `262144` | context window |
 | `MAX_CONCURRENT` | `8` | also sizes the GDN mamba state pool (`×4`) |
-| `CHUNKED_PREFILL` | `8192` | prefill chunk tokens |
+| `CHUNKED_PREFILL` | `2048` | prefill chunk tokens (GDN: 8192 stalls decode ~600ms/chunk; 2048 keeps it smooth) |
 | `SPEC` | `EAGLE` | `EAGLE` (MTP on, default) or `off` |
 | `SPEC_STEPS/SPEC_TOPK/SPEC_DRAFT` | `3/1/4` | MTP chain params |
 | `HF_CACHE_HOST` / `TRITON_CACHE_HOST` | `~/.cache/sglang_hf` / `~/.triton` | host cache dirs (reused across restarts) |

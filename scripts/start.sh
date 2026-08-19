@@ -18,7 +18,7 @@ CONTAINER_NAME="${CONTAINER_NAME:-sglang_qwen38}"
 PORT="${PORT:-8001}"
 CONTEXT_LENGTH="${CONTEXT_LENGTH:-262144}"
 MAX_CONCURRENT="${MAX_CONCURRENT:-8}"
-CHUNKED_PREFILL="${CHUNKED_PREFILL:-8192}"
+CHUNKED_PREFILL="${CHUNKED_PREFILL:-2048}"
 TP_SIZE="${TP_SIZE:-4}"
 HF_CACHE_HOST="${HF_CACHE_HOST:-${HOME}/.cache/sglang_hf}"   # reuse across restarts
 TRITON_CACHE_HOST="${TRITON_CACHE_HOST:-${HOME}/.triton}"
@@ -115,6 +115,7 @@ docker run -d \
   --disable-prefill-cuda-graph \
   --kv-cache-dtype fp8_e4m3 \
   --mamba-ssm-dtype float16 \
+  --enable-linear-replayssm-spec \
   --mamba-full-memory-ratio 4.21 \
   --mamba-radix-cache-strategy extra_buffer_lazy \
   --max-mamba-cache-size "${MAMBA_CACHE_SIZE}" \
