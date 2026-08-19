@@ -122,6 +122,7 @@ docker run -d \
   --context-length "${CONTEXT_LENGTH}" \
   "${SPEC_ARGS[@]}" \
   --reasoning-parser qwen3 \
+  --default-chat-template-kwargs '{"enable_thinking": false, "reasoning_effort": "low"}' \
   --tool-call-parser qwen3_coder \
   --sampling-defaults model \
   --host 0.0.0.0 \
